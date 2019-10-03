@@ -1,16 +1,15 @@
 const express =require('express');
-const User=require('../../models/user');
+const Mentor=require('../../models/mentor');
 var jwt=require('jsonwebtoken');
-
 module.exports=function(router){
     //GET:the 12 newest stand-up meeting notes
-    router.get('/user',function(req,res){res.send("Heelllooooooooo")})
+    router.get('/mentor',function(req,res){res.send("Heelllooooooooo")})
     
 
 
-router.post('/user',function(req,res){
+router.post('/mentor',function(req,res){
     console.log(req.body);
-    let note = new User(req.body)
+    let note = new Mentor(req.body)
     note.save(function(err,note){
         if(err){
             return res.status(400).json(err)
@@ -19,9 +18,8 @@ router.post('/user',function(req,res){
     })
 
 })
-
-router.post('/ulogin',function(req,res,next){
-    let promise=User.findOne({email:req.body.email}).exec();
+router.post('/mlogin',function(req,res,next){
+    let promise=Mentor.findOne({email:req.body.email}).exec();
     promise.then(function(doc){
         if(doc){
           if(req.body.pass){
@@ -43,22 +41,23 @@ router.post('/ulogin',function(req,res,next){
     })
 
 })
-router.get('/username',verifyToken,function(req,res,next){
-   return res.status(200).json(detoken.email);
-})
-var detoken='';
-function verifyToken(req,res,next){
-    let token=req.query.token;
-    jwt.verify(token,'secret',function(err,tokendata){
-        if(err){
-            return res.status(400).json({message:"unauthorised request"});
-        }
-        if(tokendata){
-            detoken=tokendata;
-            next();
-
-        }
-    })
-}
-}
+router.get('/mentorname',verifyToken,function(req,res,next){
+    return res.status(200).json(detoken.email);
+ })
+ var detoken='';
+ function verifyToken(req,res,next){
+     let token=req.query.token;
+     jwt.verify(token,'secret',function(err,tokendata){
+         if(err){
+             return res.status(400).json({message:"unauthorised request"});
+         }
+         if(tokendata){
+             detoken=tokendata;
+             next();
+ 
+         }
+     })
+ }
+ }
+ 
 

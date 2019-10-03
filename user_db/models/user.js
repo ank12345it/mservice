@@ -8,6 +8,8 @@ const userSchema=new mongoose.Schema({
     c_pass:{type:String}   
     
 })
+
+
 // userSchema.statics.hashPassword=function hashPassword(pass){
 //     return bcrypt.hashSync(pass,10);
 // }
