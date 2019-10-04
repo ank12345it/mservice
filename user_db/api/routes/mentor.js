@@ -20,6 +20,7 @@ router.post('/mentor',function(req,res){
 })
 router.post('/mlogin',function(req,res,next){
     let promise=Mentor.findOne({email:req.body.email}).exec();
+    console.log(promise);
     promise.then(function(doc){
         if(doc){
           if(req.body.pass){

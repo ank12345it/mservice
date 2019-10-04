@@ -10,22 +10,35 @@ module.exports=function(router){
 
 router.post('/user',function(req,res){
     console.log(req.body);
-    let note = new User(req.body)
-    note.save(function(err,note){
-        if(err){
-            return res.status(400).json(err)
+    let promise=User.findOne({email:req.body.email}).exec();
+    promise.then(function(doc){
+        if(doc){
+            return res.status(501).json({message:"user already exists"});
         }
-        res.status(200).json(note)
+        else{
+        let note = new User(req.body)
+        note.save(function(err,note){
+            if(err){
+                return res.status(501)
+            }
+            res.status(200).json(note)
+        })}})
+    promise.catch(function(err){
+        return res.status(501).json({message:"something is fisshy"});
     })
+    
 
 })
 
 router.post('/ulogin',function(req,res,next){
     let promise=User.findOne({email:req.body.email}).exec();
+    console.log(promise);
     promise.then(function(doc){
         if(doc){
-          if(req.body.pass){
-
+          console.log(req.body.pass);
+          console.log(doc.pass);
+          if(doc.pass==req.body.pass){
+                 
               let token=jwt.sign({email:doc.email},'secret',{expiresIn:"3h"});
               return res.status(200).json(token);
           }
@@ -49,6 +62,7 @@ router.get('/username',verifyToken,function(req,res,next){
 var detoken='';
 function verifyToken(req,res,next){
     let token=req.query.token;
+    
     jwt.verify(token,'secret',function(err,tokendata){
         if(err){
             return res.status(400).json({message:"unauthorised request"});
